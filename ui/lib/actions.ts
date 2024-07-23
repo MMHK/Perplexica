@@ -1,10 +1,12 @@
 import { Message } from '@/components/ChatWindow';
 
+const env = process.env;
+
 export const getSuggestions = async (chatHisory: Message[]) => {
   const chatModel = localStorage.getItem('chatModel');
   const chatModelProvider = localStorage.getItem('chatModelProvider');
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/suggestions`, {
+  const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/suggestions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
