@@ -4,8 +4,6 @@ import { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 import { Chat } from '@/app/library/page';
 
-const env = process.env;
-
 const DeleteChat = ({
   chatId,
   chats,
@@ -22,7 +20,7 @@ const DeleteChat = ({
     setLoading(true);
     try {
       const res = await fetch(
-        `${env.NEXT_PUBLIC_API_URL}/chats/${chatId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/chats/${chatId}`,
         {
           method: 'DELETE',
           headers: {

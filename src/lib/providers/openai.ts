@@ -1,66 +1,89 @@
-import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
+import { ChatOpenAI, OpenAIEmbeddings, AzureOpenAIEmbeddings, AzureChatOpenAI  } from '@langchain/openai';
 import { getOpenaiApiKey } from '../../config';
 import logger from '../../utils/logger';
 
-export const loadOpenAIChatModels = async () => {
-  const openAIApiKey = getOpenaiApiKey();
+const HAS_AZURE_OPENAI = process.env.AZURE_OPENAI_API_KEY;
+const AZURE_OPENAI_MAPPING_RAW = process.env.AZURE_OPENAI_MAPPING || 'GPT-3.5 turbo=gpt-3.5-turbo,GPT-4=gpt-4,GPT-4 turbo=gpt-4-turbo,GPT-4 omni=gpt-4o,GPT-4 omni mini=gpt-4o-mini'
+const AZURE_OPENAI_MAPPING = AZURE_OPENAI_MAPPING_RAW.split(',').reduce((acc, curr) => {
+  const [key, value] = curr.split('=');
+  acc[key] = value;
+  return acc;
+}, {} as Record<string, string>);
+const AZURE_OPENAI_EMBEDDING_MAPPING_RAW = process.env.AZURE_OPENAI_EMBEDDING_MAPPING || 'Text embedding 3 small=text-embedding-3-small,Text embedding 3 large=text-embedding-3-large';
+const AZURE_OPENAI_EMBEDDING_MAPPING = AZURE_OPENAI_EMBEDDING_MAPPING_RAW.split(',').reduce((acc, curr) => {
+  const [key, value] = curr.split('=');
+  acc[key] = value;
+  return acc;
+}, {} as Record<string, string>);
 
-  if (!openAIApiKey) return {};
-
+const loadOpenAIModels = async () => {
   try {
-    const chatModels = {
-      'GPT-3.5 turbo': new ChatOpenAI({
-        openAIApiKey,
-        modelName: 'gpt-3.5-turbo',
+    return Object.entries<string>(AZURE_OPENAI_MAPPING).reduce((acc, [key, value]) => {
+      acc[key] = new ChatOpenAI({
+        modelName: value,
         temperature: 0.7,
-      }),
-      'GPT-4': new ChatOpenAI({
-        openAIApiKey,
-        modelName: 'gpt-4',
+      });
+      return acc;
+    }, {} as Record<string, ChatOpenAI>);
+  } catch (err) {
+    logger.error(`Error loading OpenAI models: ${err}`);
+    return {};
+  }
+};
+const loadAzureOpenAIModels = async () => {
+  try {
+    return Object.entries<string>(AZURE_OPENAI_MAPPING).reduce((acc, [key, value]) => {
+      acc[key] = new AzureChatOpenAI({
+        azureOpenAIApiDeploymentName: value,
         temperature: 0.7,
-      }),
-      'GPT-4 turbo': new ChatOpenAI({
-        openAIApiKey,
-        modelName: 'gpt-4-turbo',
-        temperature: 0.7,
-      }),
-      'GPT-4 omni': new ChatOpenAI({
-        openAIApiKey,
-        modelName: 'gpt-4o',
-        temperature: 0.7,
-      }),
-      'GPT-4 omni mini': new ChatOpenAI({
-        openAIApiKey,
-        modelName: 'gpt-4o-mini',
-        temperature: 0.7,
-      }),
-    };
+      });
+      return acc;
+    }, {} as Record<string, AzureChatOpenAI>);
+  } catch (err) {
+    logger.error(`Error loading Azure OpenAI models: ${err}`);
+    return {};
+  }
+}
 
-    return chatModels;
+export const loadOpenAIChatModels = async () => {
+  try {
+    return HAS_AZURE_OPENAI ? await loadAzureOpenAIModels() : await loadOpenAIModels();
   } catch (err) {
     logger.error(`Error loading OpenAI models: ${err}`);
     return {};
   }
 };
 
-export const loadOpenAIEmbeddingsModels = async () => {
-  const openAIApiKey = getOpenaiApiKey();
-
-  if (!openAIApiKey) return {};
-
+const loadAzureOpenAIEmbeddingsModelList = async () => {
   try {
-    const embeddingModels = {
-      'Text embedding 3 small': new OpenAIEmbeddings({
-        openAIApiKey,
-        modelName: 'text-embedding-3-small',
-      }),
-      'Text embedding 3 large': new OpenAIEmbeddings({
-        openAIApiKey,
-        modelName: 'text-embedding-3-large',
-      }),
-    };
+    return Object.entries<string>(AZURE_OPENAI_EMBEDDING_MAPPING).reduce((acc, [key, value]) => {
+      acc[key] = new AzureOpenAIEmbeddings({
+        azureOpenAIApiDeploymentName: value,
+      });
+      return acc;
+    }, {} as Record<string, AzureOpenAIEmbeddings>);
+  } catch (err) {
+    logger.error(`Error loading Azure OpenAI embeddings model: ${err}`);
+    return {};
+  }
+}
+const loadOpenAIEmbeddingsModelList = async () => {
+  try {
+    return Object.entries<string>(AZURE_OPENAI_EMBEDDING_MAPPING).reduce((acc, [key, value]) => {
+      acc[key] = new OpenAIEmbeddings({
+        modelName: value,
+      });
+      return acc;
+    }, {} as Record<string, OpenAIEmbeddings>);
+  } catch (err) {
+    logger.error(`Error loading OpenAI embeddings model: ${err}`);
+    return {};
+  }
+}
 
-    return embeddingModels;
+export const loadOpenAIEmbeddingsModels = async () => {
+  try {
+    return HAS_AZURE_OPENAI ? await loadAzureOpenAIEmbeddingsModelList() : await loadOpenAIEmbeddingsModelList();
   } catch (err) {
     logger.error(`Error loading OpenAI embeddings model: ${err}`);
     return {};

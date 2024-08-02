@@ -11,8 +11,6 @@ type Image = {
   title: string;
 };
 
-const env = process.env;
-
 const SearchImages = ({
   query,
   chat_history,
@@ -36,7 +34,7 @@ const SearchImages = ({
             const chatModel = localStorage.getItem('chatModel');
 
             const res = await fetch(
-              `${env.NEXT_PUBLIC_API_URL}/images`,
+              `${process.env.NEXT_PUBLIC_API_URL}/images`,
               {
                 method: 'POST',
                 headers: {

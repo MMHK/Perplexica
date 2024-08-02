@@ -1,0 +1,20 @@
+version: '3'
+services:
+  bedrock-claude-proxy:
+    image: "mmhk/bedrock-claude-proxy"
+    restart: always
+    environment:
+      API_KEY: "your-api-key"
+      AWS_BEDROCK_ACCESS_KEY: "${AWS_BEDROCK_ACCESS_KEY}"
+      AWS_BEDROCK_SECRET_KEY: "${AWS_BEDROCK_SECRET_KEY}"
+      AWS_BEDROCK_REGION: "us-east-1"
+      AWS_BEDROCK_MODEL_MAPPINGS: "${AWS_BEDROCK_MODEL_MAPPINGS}"
+    ports:
+      - "3000:3000"
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    ports:
+      - 4000:8080
+    restart: unless-stopped

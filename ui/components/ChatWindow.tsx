@@ -21,8 +21,6 @@ export type Message = {
   sources?: Document[];
 };
 
-const env = process.env;
-
 const useSocket = (
   url: string,
   setIsWSReady: (ready: boolean) => void,
@@ -47,7 +45,7 @@ const useSocket = (
           !embeddingModelProvider
         ) {
           const providers = await fetch(
-            `${env.NEXT_PUBLIC_API_URL}/models`,
+            `${process.env.NEXT_PUBLIC_API_URL}/models`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -87,7 +85,7 @@ const useSocket = (
           );
         } else {
           const providers = await fetch(
-            `${env.NEXT_PUBLIC_API_URL}/models`,
+            `${process.env.NEXT_PUBLIC_API_URL}/models`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -215,7 +213,7 @@ const loadMessages = async (
   setNotFound: (notFound: boolean) => void,
 ) => {
   const res = await fetch(
-    `${env.NEXT_PUBLIC_API_URL}/chats/${chatId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/chats/${chatId}`,
     {
       method: 'GET',
       headers: {
@@ -265,9 +263,8 @@ const ChatWindow = ({ id }: { id?: string }) => {
   const [isReady, setIsReady] = useState(false);
 
   const [isWSReady, setIsWSReady] = useState(false);
-  const env = process.env;
   const ws = useSocket(
-    env.NEXT_PUBLIC_WS_URL!,
+    process.env.NEXT_PUBLIC_WS_URL!,
     setIsWSReady,
     setHasError,
   );

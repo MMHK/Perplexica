@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import toml from '@iarna/toml';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const configFileName = 'config.toml';
 
@@ -29,18 +31,18 @@ const loadConfig = () =>
     fs.readFileSync(path.join(__dirname, `../${configFileName}`), 'utf-8'),
   ) as any as Config;
 
-export const getPort = () => loadConfig().GENERAL.PORT;
+export const getPort = () => loadConfig().GENERAL.PORT || process.env.PORT;
 
 export const getSimilarityMeasure = () =>
   loadConfig().GENERAL.SIMILARITY_MEASURE;
 
-export const getOpenaiApiKey = () => loadConfig().API_KEYS.OPENAI;
+export const getOpenaiApiKey = () => loadConfig().API_KEYS.OPENAI || process.env.OPENAI_API_KEY;
 
 export const getGroqApiKey = () => loadConfig().API_KEYS.GROQ;
 
-export const getAnthropicApiKey = () => loadConfig().API_KEYS.ANTHROPIC;
+export const getAnthropicApiKey = () => loadConfig().API_KEYS.ANTHROPIC || process.env.ANTHROPIC_API_KEY;
 
-export const getSearxngApiEndpoint = () => loadConfig().API_ENDPOINTS.SEARXNG;
+export const getSearxngApiEndpoint = () => loadConfig().API_ENDPOINTS.SEARXNG || process.env.SEARXNG_API_ENDPOINT;
 
 export const getOllamaApiEndpoint = () => loadConfig().API_ENDPOINTS.OLLAMA;
 

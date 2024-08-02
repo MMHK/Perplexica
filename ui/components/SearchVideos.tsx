@@ -24,8 +24,6 @@ declare module 'yet-another-react-lightbox' {
   }
 }
 
-const env = process.env;
-
 const Searchvideos = ({
   query,
   chat_history,
@@ -49,7 +47,7 @@ const Searchvideos = ({
             const chatModel = localStorage.getItem('chatModel');
 
             const res = await fetch(
-              `${env.NEXT_PUBLIC_API_URL}/videos`,
+              `${process.env.NEXT_PUBLIC_API_URL}/videos`,
               {
                 method: 'POST',
                 headers: {
