@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { getSuggestions } from '@/lib/actions';
 import Error from 'next/error';
+import {GetUserHash} from "../lib/utils";
 
 export type Message = {
   messageId: string;
@@ -153,6 +154,7 @@ const useSocket = (
 
         searchParams.append('embeddingModel', embeddingModel!);
         searchParams.append('embeddingModelProvider', embeddingModelProvider);
+        searchParams.append('userHash', GetUserHash());
 
         wsURL.search = searchParams.toString();
 
@@ -218,6 +220,7 @@ const loadMessages = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        "Authorization": `Bearer ${GetUserHash()}`
       },
     },
   );

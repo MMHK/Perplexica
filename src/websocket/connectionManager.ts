@@ -23,6 +23,7 @@ export const handleConnection = async (
       getAvailableEmbeddingModelProviders(),
     ]);
 
+
     const chatModelProvider =
       searchParams.get('chatModelProvider') ||
       Object.keys(chatModelProviders)[0];
@@ -36,6 +37,7 @@ export const handleConnection = async (
     const embeddingModel =
       searchParams.get('embeddingModel') ||
       Object.keys(embeddingModelProviders[embeddingModelProvider])[0];
+    const userHash = searchParams.get('userHash') || '';
 
     let llm: BaseChatModel | undefined;
     let embeddings: Embeddings | undefined;
@@ -82,7 +84,7 @@ export const handleConnection = async (
     ws.on(
       'message',
       async (message) =>
-        await handleMessage(message.toString(), ws, llm, embeddings),
+        await handleMessage(message.toString(), ws, llm, embeddings, userHash),
     );
 
     ws.on('close', () => logger.debug('Connection closed'));

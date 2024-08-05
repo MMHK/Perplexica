@@ -101,6 +101,7 @@ export const handleMessage = async (
   ws: WebSocket,
   llm: BaseChatModel,
   embeddings: Embeddings,
+  userHash: string = '',
 ) => {
   try {
     const parsedWSMessage = JSON.parse(message) as WSMessage;
@@ -154,6 +155,7 @@ export const handleMessage = async (
               title: parsedMessage.content,
               createdAt: new Date().toString(),
               focusMode: parsedWSMessage.focusMode,
+              userHash: userHash,
             })
             .execute();
         }
@@ -165,6 +167,7 @@ export const handleMessage = async (
             chatId: parsedMessage.chatId,
             messageId: id,
             role: 'user',
+            userHash: userHash,
             metadata: JSON.stringify({
               createdAt: new Date(),
             }),

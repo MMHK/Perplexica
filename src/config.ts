@@ -47,28 +47,28 @@ export const getSearxngApiEndpoint = () => loadConfig().API_ENDPOINTS.SEARXNG ||
 export const getOllamaApiEndpoint = () => loadConfig().API_ENDPOINTS.OLLAMA;
 
 export const updateConfig = (config: RecursivePartial<Config>) => {
-  const currentConfig = loadConfig();
-
-  for (const key in currentConfig) {
-    if (!config[key]) config[key] = {};
-
-    if (typeof currentConfig[key] === 'object' && currentConfig[key] !== null) {
-      for (const nestedKey in currentConfig[key]) {
-        if (
-          !config[key][nestedKey] &&
-          currentConfig[key][nestedKey] &&
-          config[key][nestedKey] !== ''
-        ) {
-          config[key][nestedKey] = currentConfig[key][nestedKey];
-        }
-      }
-    } else if (currentConfig[key] && config[key] !== '') {
-      config[key] = currentConfig[key];
-    }
-  }
-
-  fs.writeFileSync(
-    path.join(__dirname, `../${configFileName}`),
-    toml.stringify(config),
-  );
+  // const currentConfig = loadConfig();
+  //
+  // for (const key in currentConfig) {
+  //   if (!config[key]) config[key] = {};
+  //
+  //   if (typeof currentConfig[key] === 'object' && currentConfig[key] !== null) {
+  //     for (const nestedKey in currentConfig[key]) {
+  //       if (
+  //         !config[key][nestedKey] &&
+  //         currentConfig[key][nestedKey] &&
+  //         config[key][nestedKey] !== ''
+  //       ) {
+  //         config[key][nestedKey] = currentConfig[key][nestedKey];
+  //       }
+  //     }
+  //   } else if (currentConfig[key] && config[key] !== '') {
+  //     config[key] = currentConfig[key];
+  //   }
+  // }
+  //
+  // fs.writeFileSync(
+  //   path.join(__dirname, `../${configFileName}`),
+  //   toml.stringify(config),
+  // );
 };

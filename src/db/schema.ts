@@ -4,6 +4,7 @@ export const messages = sqliteTable('messages', {
   id: integer('id').primaryKey(),
   content: text('content').notNull(),
   chatId: text('chatId').notNull(),
+  userHash: text('userHash'),
   messageId: text('messageId').notNull(),
   role: text('type', { enum: ['assistant', 'user'] }),
   metadata: text('metadata', {
@@ -14,6 +15,7 @@ export const messages = sqliteTable('messages', {
 export const chats = sqliteTable('chats', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
+  userHash: text('userHash'),
   createdAt: text('createdAt').notNull(),
   focusMode: text('focusMode').notNull(),
 });

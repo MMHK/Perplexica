@@ -5,6 +5,7 @@ import { formatTimeDifference } from '@/lib/utils';
 import { BookOpenText, ClockIcon, Delete, ScanEye } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import {GetUserHash} from "../../lib/utils";
 
 export interface Chat {
   id: string;
@@ -25,6 +26,7 @@ const Page = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": `Bearer ${GetUserHash()}`
         },
       });
 

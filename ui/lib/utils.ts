@@ -25,3 +25,13 @@ export const formatTimeDifference = (
   else
     return `${Math.floor(diffInSeconds / 31536000)} year${Math.floor(diffInSeconds / 31536000) !== 1 ? 's' : ''}`;
 };
+
+export const GetUserHash = (): string => {
+  let exist = localStorage.getItem("userHash");
+  if (!exist) {
+    exist = crypto.randomUUID();
+  }
+  localStorage.setItem("userHash", exist);
+
+  return exist;
+};

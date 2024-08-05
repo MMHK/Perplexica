@@ -14,6 +14,7 @@ export const loadAnthropicChatModels = async () => {
       acc[key] = new ChatAnthropic({
         temperature: 0.7,
         model: value,
+        anthropicApiUrl: process.env.ANTHROPIC_BASE_URL,
       });
       return acc;
     }, {} as Record<string, ChatAnthropic>)
