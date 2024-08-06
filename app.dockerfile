@@ -32,6 +32,6 @@ USER nextjs
 EXPOSE 3000
 
 ENV NEXT_PUBLIC_WS_URL= \
-NEXT_PUBLIC_API_URL=
+NEXT_PUBLIC_API_URL=http://perplexica-backend:3001
 
 CMD HOSTNAME="0.0.0.0" node server.js

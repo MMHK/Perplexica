@@ -5,7 +5,7 @@ import { formatTimeDifference } from '@/lib/utils';
 import { BookOpenText, ClockIcon, Delete, ScanEye } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import {GetUserHash} from "../../lib/utils";
+import {GetUserHash, useAPI} from "../../lib/utils";
 
 export interface Chat {
   id: string;
@@ -22,7 +22,7 @@ const Page = () => {
     const fetchChats = async () => {
       setLoading(true);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chats`, {
+      const res = await fetch(useAPI(`api/chats`), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

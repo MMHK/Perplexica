@@ -17,6 +17,18 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`, // 所有 /api/* 请求将被代理到 /api/proxy
+      },
+      {
+        source: '/ws',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/ws`, // 所有 /api/* 请求将被代理到 /api/proxy
+      },
+    ];
+  },
   output: IS_OUTPUT ? "standalone": undefined,
 };
 

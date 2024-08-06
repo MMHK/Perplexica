@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { getSuggestions } from '@/lib/actions';
 import Error from 'next/error';
-import {GetUserHash} from "../lib/utils";
+import {GetUserHash, useAPI} from "../lib/utils";
 
 export type Message = {
   messageId: string;
@@ -30,7 +30,7 @@ const useSocket = (
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    if (!ws) {
+    if (!ws && url) {
       const connectWs = async () => {
         let chatModel = localStorage.getItem('chatModel');
         let chatModelProvider = localStorage.getItem('chatModelProvider');
@@ -46,7 +46,7 @@ const useSocket = (
           !embeddingModelProvider
         ) {
           const providers = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/models`,
+            useAPI(`api/models`),
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ const useSocket = (
           );
         } else {
           const providers = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/models`,
+            useAPI(`api/models`),
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -134,7 +134,6 @@ const useSocket = (
             localStorage.setItem('embeddingModel', embeddingModel);
           }
         }
-
         const wsURL = new URL(url);
         const searchParams = new URLSearchParams({});
 
@@ -214,8 +213,9 @@ const loadMessages = async (
   setFocusMode: (mode: string) => void,
   setNotFound: (notFound: boolean) => void,
 ) => {
+
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/chats/${chatId}`,
+    useAPI(`api/chats/${chatId}`),
     {
       method: 'GET',
       headers: {
@@ -266,8 +266,19 @@ const ChatWindow = ({ id }: { id?: string }) => {
   const [isReady, setIsReady] = useState(false);
 
   const [isWSReady, setIsWSReady] = useState(false);
+  const [wsEndpoint, setWsEndpoint] = useState('');
+
+  useEffect(() => {
+    if (window) {
+      const protocol = window.location.protocol;
+      const host = window.location.host;
+
+      setWsEndpoint(`${protocol}//${host}/ws`)
+    }
+  }, [])
+
   const ws = useSocket(
-    process.env.NEXT_PUBLIC_WS_URL!,
+    wsEndpoint,
     setIsWSReady,
     setHasError,
   );

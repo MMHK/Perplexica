@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 import { Chat } from '@/app/library/page';
+import {useAPI} from "../lib/utils";
 
 const DeleteChat = ({
   chatId,
@@ -20,7 +21,7 @@ const DeleteChat = ({
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/chats/${chatId}`,
+        useAPI(`api/chats/${chatId}`),
         {
           method: 'DELETE',
           headers: {

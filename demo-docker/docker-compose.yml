@@ -9,12 +9,38 @@ services:
       AWS_BEDROCK_SECRET_KEY: "${AWS_BEDROCK_SECRET_KEY}"
       AWS_BEDROCK_REGION: "us-east-1"
       AWS_BEDROCK_MODEL_MAPPINGS: "${AWS_BEDROCK_MODEL_MAPPINGS}"
-    ports:
-      - "3000:3000"
   searxng:
     image: docker.io/searxng/searxng:latest
     volumes:
       - ./searxng:/etc/searxng:rw
+    restart: unless-stopped
+
+  perplexica-backend:
+    image: mmhk/perplexica:backend
+    depends_on:
+      - searxng
     ports:
-      - 4000:8080
+      - 3001:3001
+    volumes:
+      - ./backend-dbstore:/home/perplexica/data
+    environment:
+      - ANTHROPIC_BASE_URL=http://bedrock-claude-proxy:3000
+      - ANTHROPIC_API_KEY=your-api-key
+      - ANTHROPIC_MAPPING=Claude 2.1=claude-2.1,Claude 3.5 Sonnet=claude-3-sonnet-20240229
+      - AZURE_OPENAI_MAPPING=GPT-4=gpt-4,GPT-4 omni=gpt-4o
+      - AZURE_OPENAI_EMBEDDING_MAPPING=Text embedding 3 large=text-embedding-3-large
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_API_INSTANCE_NAME=${AZURE_OPENAI_API_INSTANCE_NAME}
+      - AZURE_OPENAI_API_VERSION=2023-05-15
+      - SEARXNG_API_ENDPOINT=http://searxng:8080
+    restart: unless-stopped
+
+  perplexica-app:
+    image: mmhk/perplexica:app
+    depends_on:
+      - perplexica-backend
+    ports:
+      - 3000:3000
+    environment:
+      - NEXT_PUBLIC_API_URL=http://perplexica-backend:3001
     restart: unless-stopped

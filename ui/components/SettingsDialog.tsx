@@ -8,6 +8,7 @@ import React, {
   type SelectHTMLAttributes,
 } from 'react';
 import ThemeSwitcher from './theme/Switcher';
+import {useAPI} from "../lib/utils";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -88,7 +89,7 @@ const SettingsDialog = ({
     if (isOpen) {
       const fetchConfig = async () => {
         setIsLoading(true);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/config`, {
+        const res = await fetch(useAPI(`api/config`), {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -148,7 +149,7 @@ const SettingsDialog = ({
     setIsUpdating(true);
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/config`, {
+      await fetch(useAPI(`api/config`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
